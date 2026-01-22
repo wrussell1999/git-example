@@ -1,6 +1,0 @@
-id: fail
-namespace: example
-
-tasks:
-  - id: hello
-    type: io.kestra.plugin.core.execution.Fail

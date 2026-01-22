@@ -1,7 +1,0 @@
-id: narwhal_723103
-namespace: example
-
-tasks:
-  - id: hello
-    type: io.kestra.plugin.core.log.Log
-    message: Hello World! 🚀

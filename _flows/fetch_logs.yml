@@ -1,9 +1,0 @@
-id: fetch_logs
-namespace: example
-
-tasks:
-  - id: hello
-    type: io.kestra.plugin.core.log.Log
-    level: DEBUG
-    message: "{{ task.id }} started at {{ taskrun.startDate }}"
- 

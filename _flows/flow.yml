@@ -1,0 +1,10 @@
+id: flow
+namespace: example
+tasks:
+  - id: welcome
+    type: io.kestra.plugin.core.log.Log
+    message: Hello, World
+
+  - id: log_Will
+    type: io.kestra.plugin.core.log.Log
+    message: Hello Will
