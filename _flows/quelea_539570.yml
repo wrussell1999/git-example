@@ -1,0 +1,12 @@
+id: quelea_539570
+namespace: example
+
+tasks:
+  - id: hello
+    type: io.kestra.plugin.core.log.Log
+    message: Hello World! 🚀
+
+triggers:
+  - id: webhook
+    type: io.kestra.plugin.core.trigger.Webhook
+    key: 4wjtkzwVGBM9yKnjm3yv8r

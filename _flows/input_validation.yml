@@ -1,0 +1,16 @@
+id: input_validation
+namespace: example
+
+inputs:
+  - id: file
+    type: FILE
+    allowedFileExtensions:
+      - .csv
+
+tasks:
+  - id: transform
+    type: io.kestra.plugin.scripts.python.Commands
+    inputFiles:
+      data.csv: "{{ input.file }}"
+    commands:
+      - python process.py 

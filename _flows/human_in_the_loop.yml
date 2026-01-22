@@ -1,0 +1,20 @@
+id: human_in_the_loop
+namespace: example
+
+tasks:
+  - id: before_approval
+    type: io.kestra.plugin.core.debug.Return
+    format: Output data that needs to be validated by a human
+
+  - id: approval_request
+    type: io.kestra.plugin.ee.flow.HumanTask
+    assignment:
+      users:
+        - wrussell@kestra.io
+        - example@kestra.io
+      groups:
+        - Data
+
+  - id: post_approval_log
+    type: io.kestra.plugin.core.log.Log
+    message: Manual approval received! Continuing the execution...

@@ -1,0 +1,24 @@
+id: concat_example
+namespace: example
+
+tasks:
+  - id: first_file
+    type: io.kestra.plugin.scripts.shell.Commands
+    commands:
+      - echo "Hello John\nGoodbye John" > name.txt
+    outputFiles:
+      - "*.txt"
+
+  - id: second_file
+    type: io.kestra.plugin.scripts.shell.Commands
+    commands:
+      - echo "Hello Jane" > name.txt
+    outputFiles:
+      - "*.txt"
+
+  - id: concat
+    type: io.kestra.plugin.core.storage.Concat
+    separator: "\n"
+    files:
+      - "{{ outputs.first_file.outputFiles['name.txt'] }}"
+      - "{{ outputs.second_file.outputFiles['name.txt'] }}"

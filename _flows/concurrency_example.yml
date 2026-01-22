@@ -1,0 +1,12 @@
+id: concurrency_example
+namespace: example
+
+concurrency:
+  limit: 2
+  behavior: CANCEL
+
+tasks:
+  - id: wait
+    type: io.kestra.plugin.scripts.shell.Commands
+    commands:
+      - sleep 10

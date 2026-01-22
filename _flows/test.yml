@@ -1,0 +1,10 @@
+id: test
+namespace: example
+inputs:
+  - id: date
+    type: STRING
+    defaults: "{{ now() }}"
+tasks:
+  - id: print_date
+    type: io.kestra.plugin.core.log.Log
+    message: hello on {{ inputs.date }}

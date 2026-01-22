@@ -1,0 +1,11 @@
+id: process_invoice_flow
+namespace: example
+
+labels:
+  team: finance
+  priority: HIGH
+
+tasks:
+  - id: hello
+    type: io.kestra.plugin.core.log.Log
+    message: hello from a flow with labels
