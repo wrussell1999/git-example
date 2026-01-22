@@ -1,0 +1,20 @@
+id: produce_kafka_message
+namespace: example
+tasks:
+  - id: api
+    type: io.kestra.plugin.core.http.Request
+    uri: https://dummyjson.com/products
+
+  - id: produce
+    type: io.kestra.plugin.kafka.Produce
+    from:
+      key: message
+      value: "Hello World"
+      timestamp: "{{ execution.startDate }}"
+      headers:
+        x-header: some value
+    keySerializer: STRING
+    valueSerializer: JSON
+    topic: example
+    properties:
+      bootstrap.servers: kafka:29092

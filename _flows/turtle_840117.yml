@@ -1,0 +1,19 @@
+id: turtle_840117
+namespace: example
+
+tasks:
+  - id: input
+    type: io.kestra.plugin.core.output.OutputValues
+    values:
+      array: [ 1, 2, 3 ]
+  - id: foreach
+    type: io.kestra.plugin.core.flow.ForEach
+    values: "{{ outputs.input.values.array }}"
+    tasks:
+      - id: compute
+        type: io.kestra.plugin.core.output.OutputValues
+        values:
+          x: "{{ taskrun.value | number  * 10 }}" 
+  - id: log
+    type: io.kestra.plugin.core.log.Log
+    message: "{{ outputs.compute }}"

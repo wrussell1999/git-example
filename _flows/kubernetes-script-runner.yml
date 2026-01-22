@@ -1,0 +1,57 @@
+id: kubernetes-script-runner
+namespace: example
+
+tasks:
+  - id: send_data
+    type: io.kestra.plugin.scripts.python.Script
+    containerImage: ghcr.io/kestra-io/pydata:latest
+    taskRunner:
+      type: io.kestra.plugin.ee.kubernetes.runner.Kubernetes
+      namespace: default
+      pullPolicy: ALWAYS
+      config:
+        username: docker-desktop
+        masterUrl: https://docker-for-desktop:6443
+        caCertData: xxx
+        clientCertData: xxx
+        clientKeyData: xxx
+      resources:
+        request:
+          cpu: 500m
+          memory: 128Mi
+    outputFiles:
+      - "*.json"
+    script: |
+      import platform
+      import socket
+      import sys
+      import json
+      from kestra import Kestra
+
+      print("Hello from a Kubernetes runner!")
+
+      host = platform.node()
+      py_version = platform.python_version()
+      platform = platform.platform()
+      os_arch = f"{sys.platform}/{platform.machine()}"
+
+      def print_environment_info():
+          print(f"Host's network name: {host}")
+          print(f"Python version: {py_version}")
+          print(f"Platform info: {platform}")
+          print(f"OS/Arch: {os_arch}")
+
+          env_info = {
+              "host": host,
+              "platform": platform,
+              "os_arch": os_arch,
+              "python_version": py_version,
+          }
+          Kestra.outputs(env_info)
+
+          filename = "environment_info.json"
+          with open(filename, "w") as json_file:
+              json.dump(env_info, json_file, indent=4)
+
+      if __name__ == '__main__':
+          print_environment_info()

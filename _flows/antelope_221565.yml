@@ -1,0 +1,38 @@
+id: antelope_221565
+namespace: example
+
+tasks:
+  - id: foreach
+    type: io.kestra.plugin.core.flow.ForEach
+    values: ["Hello John", "Hello Jane", "Hello Doe"]
+    tasks:
+      - id: start_api_call
+        type: io.kestra.plugin.scripts.shell.Commands
+        commands:
+          - echo {{ taskrun.value }} > generated
+        outputFiles:
+          - generated
+
+  - id: echo_one
+    type: io.kestra.plugin.scripts.shell.Commands
+    commands:
+    - echo "Hello John" > 1.txt
+    - echo "Hello Jane" > 2.txt
+    - echo "Hello Doe" > 3.txt
+    outputFiles:
+    - "*.txt"
+
+
+  - id: log
+    type: io.kestra.plugin.core.log.Log
+    message:
+      - "{{ outputs.echo_one.outputFiles | jq('.[]') }}"
+      - "{{ outputs.start_api_call | jq('.[].outputFiles.generated') }}"
+
+  - id: concat_dynamic_one
+    type: io.kestra.plugin.core.storage.Concat
+    files: "{{ outputs.echo_one.outputFiles | jq('.[]') }}"
+
+  - id: concat_dynamic_foreach
+    type: io.kestra.plugin.core.storage.Concat
+    files: "{{ outputs.start_api_call | jq('.[].outputFiles.generated') }}"

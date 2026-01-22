@@ -1,0 +1,27 @@
+id: outputs_example
+namespace: example
+
+tasks:
+  - id: generate_list
+    type: io.kestra.plugin.scripts.python.Script
+    dependencies:
+      - kestra
+    script: |
+      from kestra import Kestra
+      data = list(range(0, 3))
+      Kestra.outputs({"data": data})
+
+  - id: foreach
+    type: io.kestra.plugin.core.flow.ForEach
+    values: "{{ outputs.generate_list.vars.data }}"
+    tasks:
+      - id: parallel
+        type: io.kestra.plugin.core.flow.Parallel
+        tasks:
+          - id: output
+            type: io.kestra.plugin.core.output.OutputValues
+            values:
+              number_value: "{{ parent.taskrun.value }}"
+          - id: log
+            type: io.kestra.plugin.core.log.Log
+            message: "Hello: {{ parent.taskrun.value }}"

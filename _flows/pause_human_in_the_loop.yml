@@ -1,0 +1,21 @@
+id: pause_human_in_the_loop
+namespace: example
+
+tasks:
+  - id: before_approval
+    type: io.kestra.plugin.core.debug.Return
+    format: Output data that needs to be validated by a human
+
+  - id: pause
+    type: io.kestra.plugin.core.flow.Pause
+
+  - id: run_post_approval
+    type: io.kestra.plugin.scripts.shell.Commands
+    taskRunner:
+      type: io.kestra.plugin.core.runner.Process
+    commands:
+      - echo "Manual approval received! Continuing the execution..."
+
+  - id: post_resume
+    type: io.kestra.plugin.core.debug.Return
+    format: "{{ task.id }} started on {{ taskrun.startDate }} after the Pause"

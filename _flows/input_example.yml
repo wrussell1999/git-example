@@ -1,0 +1,15 @@
+id: input_example
+namespace: example
+
+inputs:
+  - id: time
+    type: STRING
+    defaults: "{{ now() }}"
+
+variables:
+  time: "Time: {{ inputs.time }}"
+
+tasks:
+  - id: hello
+    type: io.kestra.plugin.core.log.Log
+    message: "{{ vars.time }}"

@@ -1,0 +1,9 @@
+id: error_in_flow
+namespace: example
+inputs:
+  - id: name
+    type: STRING
+tasks:
+  - id: hello
+    type: io.kestra.plugin.core.log.Log
+    message: Hello World, {{ inputs.name }}! 🚀

@@ -1,0 +1,40 @@
+id: storage_tasks
+namespace: example
+
+tasks:
+  - id: generate_files
+    type: io.kestra.plugin.scripts.shell.Script
+    script: |
+      cat <<EOF > my_data.csv
+      order_id,customer_name,customer_email,product_id,price
+      1,Kelly Olsen,kelly@example.com,20,166.89
+      2,Miguel Moore,mccarthylee@example.net,14,171.63
+      3,Kelly Olsen,kelly@example.com,20,166.89
+      4,Jessica White,jessica@example.com,12,50.62
+      5,Jessica White,jessica@example.com,12,50.62
+      EOF
+    outputFiles:
+      - "*.csv"
+
+  - id: csv_to_ion
+    type: io.kestra.plugin.serdes.csv.CsvToIon
+    from: "{{ outputs.generate_files.outputFiles['my_data.csv'] }}"
+
+  - id: dedup
+    type: io.kestra.plugin.core.storage.DeduplicateItems
+    from: "{{ outputs.csv_to_ion.uri }}"
+    expr: "{{ customer_email }}"
+
+  - id: download
+    type: io.kestra.plugin.core.http.Download
+    uri: https://huggingface.co/datasets/kestra/datasets/raw/main/csv/orders.csv
+
+  - id: split
+    type: io.kestra.plugin.core.storage.Split
+    from: "{{ outputs.download.uri }}"
+    bytes: 5KB
+
+  - id: fetch
+    type: io.kestra.plugin.core.log.Fetch
+    executionId: "{{ execution.id }}"
+    level: TRACE

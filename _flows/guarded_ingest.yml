@@ -1,0 +1,46 @@
+id: guarded_ingest
+namespace: example
+
+inputs:
+  - id: environment
+    type: SELECT
+    values: [dev, prod]
+    defaults: dev
+  - id: run_date
+    type: DATETIME
+    defaults: "{{ now() }}"
+  - id: payload_url
+    type: URI
+    defaults: https://dummyjson.com/products?limit=5
+
+checks:
+  # Block risky prod runs outside the allowed window
+  - message: "Prod runs are only allowed between 06:00 and 22:00 UTC"
+    condition: "{{ inputs.environment != 'prod' or (inputs.run_date | date('HH') | number >= 6 and inputs.run_date | date('HH') | number < 22) }}"
+    style: ERROR
+    behavior: BLOCK_EXECUTION
+
+  # Warn if the payload is not the approved dummyjson source
+  - message: "Non-approved source detected. Use https://dummyjson.com when possible."
+    condition: "{{ inputs.payload_url | startsWith('https://dummyjson.com') }}"
+    style: WARNING
+    behavior: CREATE_EXECUTION
+
+
+tasks:
+  - id: log_brief
+    type: io.kestra.plugin.core.log.Log
+    message: "inputs.environment != 'prod' or (inputs.run_date | date('HH') | number >= 6 and inputs.run_date | date('HH') | number < 22)"
+
+  - id: log_inputs
+    type: io.kestra.plugin.core.log.Log
+    message: 
+      - "Environment: {{ inputs.environment }}"
+      - "Hour: {{ inputs.run_date | date('HH') }}"
+
+  - id: log_condition
+    type: io.kestra.plugin.core.log.Log
+    message: >
+      {{ inputs.environment != 'prod' or
+          (inputs.run_date | date('HH') | number >= 6 and
+          inputs.run_date | date('HH') | number < 22) }}

@@ -1,0 +1,12 @@
+id: pause_warn
+namespace: example
+
+tasks:
+  - id: pause
+    type: io.kestra.plugin.core.flow.Pause
+    pauseDuration: PT10S
+    behavior: WARN
+
+  - id: post_resume
+    type: io.kestra.plugin.core.log.Log
+    message: "{{ task.id }} started on {{ taskrun.startDate }} after the Pause"
